@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Ganja2Kinja</title>
+
+    <meta name="description" content="From Ganja to Kinja">
+    <meta name="author" content="Kéki Balázs">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+
+        <section>
+          <h1>Ganja => Kinja</h1>
+          <h3>LAMP világból Scalara és Play Frameworkre</h3>
+          <p>
+            <small>Kéki Balázs / <a href="http://twitter.com/keki">keki@gawker.com</a></small>
+          </p>
+        </section>
+
+        <section>
+          <h2>Ganja: LAMP alapú CMS, Java backend</h2>
+          <p>
+          <ul>
+            <li>PHP frontend</li>
+            <li>Java backend</li>
+            <li>XML kommunikáció</li>
+            <li>Linux</li>
+            <li>MySQL</li>
+            <li>2006-2012</li>
+          </ul>
+          </p>
+        </section>
+
+        <section>
+          <h2>PHP => Scala</h2>
+          <br />
+          <ul>
+          <h4>Problémáink</h4>
+            <li>fejleszthetőség<span class="fragment"> => type-safety</span></li>
+            <li>teljesítmény<span class="fragment"> => JVM</span></li>
+            <li>nincs párhuzamosíthatóság<span class="fragment"> => nagyon jó</span></li>
+            <li>uncsi<span class="fragment"> => funkcionális programozás</span></li>
+          <br />
+          <h4>Jó dolgok</h4>
+            <li>PHP: nagy community, libraryk<span class="fragment"> => nagyobb, többebb</span></li>
+            <li>gyors deployment<span class="fragment"> => valamit valamiért</li></li>
+            <li>van egy csomó PHP programozónk<span class="fragment"> => upsz</span></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Kinja</h2>
+          <p>
+          <ul>
+            <li>Scala/Play frontend</li>
+            <li>Scala/Play backend</li>
+            <li>JSON API</li>
+            <li>Linux</li>
+            <li>MySQL, Protobuf</li>
+          </ul>
+          </p>
+        </section>
+
+        <section>
+          <h1>Play! Framework 2.1</h1>
+          <ul>
+            <li>Fejlesztés</li>
+            <li>Routing</li>
+            <li>Actionök, párhuzamoskodás</li>
+            <li>WS (HTTP library)</li>
+            <li>JSON</li>
+            <li>Formok</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Néhány technikai részlet</h2>
+          <ul>
+            <li>Scala, Java</li>
+            <li>Sbt</li>
+            <li>Hot-reload fejlesztéskor</li>
+            <li>JUnit, Selenium</li>
+            <li>Netty</li>
+            <li>HOCON</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Routing</h2>
+          <pre><code data-trim contenteditable>
+GET  /api/tag/:tag           path.to.MyController.tag(tag: String)
+
+GET  /api/post/$id<[0-9]+> 
+          path.to.MyController.preview(id: Id, foobar: Boolean ?= true)
+
+POST /api/post/add           path.to.MyController.add()
+          </code></pre>
+          <br />
+          <small>Hostnév nem elérhető a route configban</small>
+        </section>
+
+        <section>
+          <section>
+          <h2>Controller, Action</h2>
+          <h3>Hello World</h3>
+
+routes.conf:
+<pre><code data-trim contenteditable>
+GET  /hello/:name         path.to.MyController.hello(name: String)
+</code></pre>
+
+MyController.scala:
+<pre><code data-trim contenteditable class="scala">
+object MyController extends Controller {
+  def hello(name: String) = Action {
+    Ok("Hello " + name + "!")
+  }    
+}
+</code></pre>
+		<br />
+		<small><a href="http://www.parleys.com/play/51c38b03e4b0ed877035686c">James Roper előadása @ ScalaDays 2013</a></small>
+
+      </section>
+</section>
+
+        <section>
+          <h2>WS</h2>
+          <h4>non-blocking HTTP client</h4>
+          <pre><code data-trim contenteditable class="scala">
+val params = Map("foo" -> "bar", "limit" -> 10) 
+
+val request = 
+  WS.url("http://example.com/")
+    .withHeaders(("Accept-Encoding", "UTF-8"))
+    .withQueryString(params: _*)
+
+val response: Future[Response] = request.get
+
+val foobar: String = (response.json \ "foo" \ "bar").as[String]
+          </code></pre>
+        </section>
+
+<section>
+      <section>
+          <h3>Aszinkron</h3>
+          <ul>
+            <li>Akka</li>
+            <li>ExectutionContextek: netty, internal, default, akka</li>
+            <br />
+            <small>
+            <li><a href="https://github.com/playframework/playframework/blob/master/documentation/manual/detailledTopics/configuration/ThreadPools.md">Understanding Play thread pools</a></li>
+            <li><a href="http://sadache.tumblr.com/post/42351000773/async-reactive-nonblocking-threads-futures-executioncont">Async, Reactive, Threads, Futures, ExecutionContexts</a></li>
+            </small>
+           </ul>
+      </section>
+
+      <section>
+          <h3>Aszinkron</h3>
+<pre><code data-trim contenteditable class="scala">
+  def factorial(i: Int) =
+    Action { request =>
+      Async {
+        Ok(factorial(i))
+      }
+    }
+  def factorial(i: Long): Future[Long] = RemoteFactorialApi.calculate(i)
+</code></pre>
+      </section>
+
+        </section>
+
+        <section>
+          <h2>JSON</h2>
+          <ul>
+            Próbálkozásaink:
+            <li>Scala (scala.util.parsing.json)</li>
+            <li>Lift (net.liftweb.json)</li>
+            <li>Jerkson/Jackson</li>
+            <li>Play</li>
+          </ul>
+        </section>
+
+      <section>
+        <section>
+          <h2>Play JSON</h2>
+			<h4>JSON inception</h4>
+<pre><code data-trim contenteditable class="scala">
+case class Person(name: String, age: Int, email: Option[String])
+
+implicit val personFormats = Json.format[Person] //varázslat
+
+json_input.as[List[Person]]
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Play JSON</h2>
+
+<pre><code data-trim contenteditable class="scala">
+case class Person(name: String, age: Int, email: Option[String], s: Int)
+
+implicit def personReads(json: JsValue): JsResult[Person] = JsSuccess(
+  Person(
+    name = (json \ "name").as[String],
+    age = ageFromDate((json \ "date").as[Int]),
+    email = (json \ "email").asOpt[String]
+    s = Random.nextInt(1000)))
+
+implicit def personWrites(person: Person): JsValue =
+  Json.obj(
+    "name" -> person.name,
+    "age" -> person.age
+    "email" -> person.email) // "email" mezo js oldalon null lesz 
+</code></pre>
+		<small>sokféleképpen lehet csinálni, null vs. undefined amire érdemes figyelni</small>
+        </section>
+
+      </section>
+
+        <section>
+          <h2>Form kezelés, validáció</h2>
+        <pre><code data-trim contenteditable class="scala">
+case class User(name: String, age: Int)
+
+val userForm = Form(
+  mapping(
+    "name" -> text,
+    "age" -> number.validating(min(0), max(100))
+  )(User.apply)(User.unapply)
+)
+
+val user: User = userForm.bindFromRequest.get
+    </code></pre>
+        </section>
+
+        <section>
+          <h2>Amit nem használunk</h2>
+          <ul>
+            <li>Anorm: van sokkal jobb</li>
+            <li>Scala Templates: pluginként használunk mást</li>
+            <li>Play Cache: még nem kellett</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Nem Play</h1>
+          <h4>A PHP-ről Scala-ra átállás egyéb tapasztalatai</h4>
+        </section>
+
+        <section>
+          <h2>Protobuf</h2>
+          <h4>Java, elzárva</h4>
+          <ul>
+            <li>Scalabuff és mások</li>
+            <li>Java + generált wrapper kód</li>
+            <li>Java, de egyből case classokba konvertálás</li>
+          </ul>
+        </section>
+
+        <section>
+          <section>
+          <h2>Closure Templates</h2>
+          <h4>Java, némi wrappolgatás, pluginkodás</h4>
+          <p>
+          <ul>
+            <li>ugyanaz a template szerver és kliens oldalon</li>
+            <li>kicsit okosabb, mint a mustache</li>
+            <li>compiled: gyors, fordítási időben néhány ellenőrzés</li>
+            <li>internacionalizáció</li>
+            <li>nehéz rákeresni (hint: "soy")</li>
+            <br />
+            <small>
+            <li><a href="https://github.com/gawkermedia/sbt-closure-templates">SBT plugin</a></li>
+            <li><a href="https://github.com/gawkermedia/play2-closure">Play plugin</a></li>
+            </small>
+          </ul>
+          </p>
+
+          </section>
+
+          <section>
+          <h2>Closure Templates</h2>
+        <pre><code data-trim contenteditable class="scala">
+/**
+ * @param post blabla
+ * @param? flash opcionális
+ */
+{template .permalink}
+  {if $flash and $flash.share}
+    <span id="post-share-types">{$flash.share}</span>
+  {/if}
+  &lt;section class="branch-wrapper">{message}
+    {call mantle.components.post.item}
+      {param post: $post /}
+      {param hidePanorama: true /}
+    {/call}
+  &lt;/section>
+  {msg desc="Permalink footer - Something"}Something{/msg}
+{/template}          
+    </code></pre>          
+          </section>
+
+        </section>
+
+        <section>
+          <h2>Slick</h2>
+            <h4>teljesen scala</h4>
+          <ul>
+            <li>Typesafe stack része</li>
+            <li>for-comprehension szerű szintaxis</li>
+          </ul>
+          <p>
+					<h4>Egy query:</h4>
+<pre><code class="scala">
+def byIds(ids: List[Int]) = for {
+	post <- Posts if post.id inSet ids
+} yield post
+
+val q = byIds( List( 5, 6, 7 ) )
+</code></pre>
+
+					<h4>Ez az sql lesz belőle</h4>
+					<pre><code class="sql">select x2."id", x2."entry" from "post" x2 where x2."id" in (5, 6, 7)</code></pre>
+		 </p>
+        </section>
+
+        <section>
+          <h2>Üzemeltetés</h2>
+          <ul>
+            <li>standalone app</li> 
+            <li>fordítás lassú</li>
+            <li>leállítás beindulás lassú</li>
+            <li>assetek a jarban :(</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Teljesítmény</h2>
+          <h4>Gyorsabb, mint a PHP (legalábbis az a PHP amit mi írtunk)</h4>
+          <ul>
+            <h4>Locks</h4>
+        <li>Shared resource a Jackson libben (SerializerCache)</li>
+        <li>Global lock a Scala XML parserben (SAXParserFactory constructorban)</li>
+        <li>Global lock az AppDynamics agentben (nem tudom hol, kidobtuk)</li>
+        </br>
+        <h4>Sima lassúság, de jó mélyen</h4>
+        <li>Scala XML Transformer nagyon-nagyon alapos</li>
+        <li>JSON olvasás lassú ha hosszú listákat kell összeraknia (List.append)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Monitorozás</h2>
+          <ul>
+            <li>Newrelic</li>
+            <li>Typesafe Console</li>
+            <li>statsd + graphite</li>
+            <li>VisualVM, meg minden ami Java</li>
+          </ul>
+            <pre class="fragment"><code data-trim contenteditable>
+- scala.concurrent.Future$$anonfun$map$1.apply
+  - scala.concurrent.Future$$anonfun$map$1.liftedTree2$1
+    - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
+      - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
+        - play.api.libs.ws.Response.json
+            </code></pre>
+        </section>
+
+        <section>
+          <h1>ÉS VÉGE</h1>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+    margin: 0.0,
+
+        theme: 'default', // available themes are in /css/theme
+        transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
