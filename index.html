@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Ganja2Kinja</title>
+    <title>Ganja 2 Kinja</title>
 
     <meta name="description" content="From Ganja to Kinja">
     <meta name="author" content="Kéki Balázs">
@@ -47,7 +47,7 @@
         </section>
 
         <section>
-          <h2>Ganja: LAMP alapú CMS, Java backend</h2>
+          <h2>Ganja: PHP, Java backend</h2>
           <p>
           <ul>
             <li>PHP frontend</li>
@@ -92,18 +92,10 @@
 
         <section>
           <h1>Play! Framework 2.1</h1>
-          <ul>
-            <li>Fejlesztés</li>
-            <li>Routing</li>
-            <li>Actionök, párhuzamoskodás</li>
-            <li>WS (HTTP library)</li>
-            <li>JSON</li>
-            <li>Formok</li>
-          </ul>
         </section>
 
         <section>
-          <h2>Néhány technikai részlet</h2>
+          <h2>Néhány részlet</h2>
           <ul>
             <li>Scala, Java</li>
             <li>Sbt</li>
@@ -125,7 +117,7 @@ GET  /api/post/$id<[0-9]+>
 POST /api/post/add           path.to.MyController.add()
           </code></pre>
           <br />
-          <small>Hostnév nem elérhető a route configban</small>
+          <small>hmm, a hostnév nem elérhető a route configban</small>
         </section>
 
         <section>
@@ -169,9 +161,10 @@ val foobar: String = (response.json \ "foo" \ "bar").as[String]
           </code></pre>
         </section>
 
-<section>
       <section>
-          <h3>Aszinkron</h3>
+
+      <section>
+          <h3>Async</h3>
           <ul>
             <li>Akka</li>
             <li>ExectutionContextek: netty, internal, default, akka</li>
@@ -184,7 +177,7 @@ val foobar: String = (response.json \ "foo" \ "bar").as[String]
       </section>
 
       <section>
-          <h3>Aszinkron</h3>
+          <h3>Async</h3>
 <pre><code data-trim contenteditable class="scala">
   def factorial(i: Int) =
     Action { request =>
