@@ -39,8 +39,8 @@
       <div class="slides">
 
         <section>
-          <h1>Ganja => Kinja</h1>
-          <h3>LAMP világból Scalara és Play Frameworkre</h3>
+          <h1>Ganja 2 Kinja</h1>
+          <h3>Váltás PHP-ról Scalara és Play Frameworkre</h3>
           <p>
             <small>Kéki Balázs / <a href="http://twitter.com/keki">keki@gawker.com</a></small>
           </p>
@@ -146,8 +146,8 @@ object MyController extends Controller {
   }    
 }
 </code></pre>
-		<br />
-		<small><a href="http://www.parleys.com/play/51c38b03e4b0ed877035686c">James Roper előadása @ ScalaDays 2013</a></small>
+    <br />
+    <small><a href="http://www.parleys.com/play/51c38b03e4b0ed877035686c">James Roper előadása @ ScalaDays 2013</a></small>
 
       </section>
 </section>
@@ -212,7 +212,7 @@ val foobar: String = (response.json \ "foo" \ "bar").as[String]
       <section>
         <section>
           <h2>Play JSON</h2>
-			<h4>JSON inception</h4>
+      <h4>JSON inception</h4>
 <pre><code data-trim contenteditable class="scala">
 case class Person(name: String, age: Int, email: Option[String])
 
@@ -241,7 +241,7 @@ implicit def personWrites(person: Person): JsValue =
     "age" -> person.age
     "email" -> person.email) // "email" mezo js oldalon null lesz 
 </code></pre>
-		<small>sokféleképpen lehet csinálni, null vs. undefined amire érdemes figyelni</small>
+    <small>sokféleképpen lehet csinálni, null vs. undefined amire érdemes figyelni</small>
         </section>
 
       </section>
@@ -339,42 +339,28 @@ val user: User = userForm.bindFromRequest.get
             <li>for-comprehension szerű szintaxis</li>
           </ul>
           <p>
-					<h4>Egy query:</h4>
+          <h4>Egy query:</h4>
 <pre><code class="scala">
 def byIds(ids: List[Int]) = for {
-	post <- Posts if post.id inSet ids
+  post <- Posts if post.id inSet ids
 } yield post
 
 val q = byIds( List( 5, 6, 7 ) )
 </code></pre>
 
-					<h4>Ez az sql lesz belőle</h4>
-					<pre><code class="sql">select x2."id", x2."entry" from "post" x2 where x2."id" in (5, 6, 7)</code></pre>
-		 </p>
+          <h4>Ez az sql lesz belőle</h4>
+          <pre><code class="sql">select x2."id", x2."entry" from "post" x2 where x2."id" in (5, 6, 7)</code></pre>
+     </p>
         </section>
 
         <section>
           <h2>Üzemeltetés</h2>
           <ul>
+          <h4>Deployment</h4>
             <li>standalone app</li> 
-            <li>fordítás lassú</li>
-            <li>leállítás beindulás lassú</li>
+            <li>fordítás, leállítás, elindítás, warmup -> deployment lassú</li>
             <li>assetek a jarban :(</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Teljesítmény</h2>
-          <h4>Gyorsabb, mint a PHP (legalábbis az a PHP amit mi írtunk)</h4>
-          <ul>
-            <h4>Locks</h4>
-        <li>Shared resource a Jackson libben (SerializerCache)</li>
-        <li>Global lock a Scala XML parserben (SAXParserFactory constructorban)</li>
-        <li>Global lock az AppDynamics agentben (nem tudom hol, kidobtuk)</li>
-        </br>
-        <h4>Sima lassúság, de jó mélyen</h4>
-        <li>Scala XML Transformer nagyon-nagyon alapos</li>
-        <li>JSON olvasás lassú ha hosszú listákat kell összeraknia (List.append)</li>
+            <h4>Monitorozás:
           </ul>
         </section>
 
@@ -393,6 +379,21 @@ val q = byIds( List( 5, 6, 7 ) )
       - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
         - play.api.libs.ws.Response.json
             </code></pre>
+        </section>
+
+        <section>
+          <h2>Teljesítmény</h2>
+          <h4>Gyorsabb, mint a PHP (legalábbis az a PHP amit mi írtunk)</h4>
+          <ul>
+            <h4>Locks</h4>
+        <li>Shared resource a Jackson libben (SerializerCache)</li>
+        <li>Global lock a Scala XML parserben (SAXParserFactory constructorban)</li>
+        <li>Global lock az AppDynamics agentben (nem tudom hol, kidobtuk)</li>
+        </br>
+        <h4>Sima lassúság, de jó mélyen</h4>
+        <li>Scala XML Transformer nagyon-nagyon alapos</li>
+        <li>JSON olvasás lassú ha hosszú listákat kell összeraknia (List.append)</li>
+          </ul>
         </section>
 
         <section>
