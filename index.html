@@ -125,13 +125,17 @@ POST /api/post/add           path.to.MyController.add()
           <h2>Controller, Action</h2>
           <h3>Hello World</h3>
 
+
+<pre>
 routes.conf:
-<pre><code data-trim contenteditable>
+<code data-trim contenteditable>
 GET  /hello/:name         path.to.MyController.hello(name: String)
 </code></pre>
 
+
+<pre>
 MyController.scala:
-<pre><code data-trim contenteditable class="scala">
+<code data-trim contenteditable class="scala">
 object MyController extends Controller {
   def hello(name: String) = Action {
     Ok("Hello " + name + "!")
@@ -353,13 +357,8 @@ val q = byIds( List( 5, 6, 7 ) )
             <li>standalone app</li> 
             <li>fordítás, leállítás, elindítás, warmup -> deployment lassú</li>
             <li>assetek a jarban :(</li>
-            <h4>Monitorozás:
-          </ul>
-        </section>
-
-        <section>
-          <h2>Monitorozás</h2>
-          <ul>
+            <br />
+            <h4>Monitorozás</h4>
             <li>Newrelic</li>
             <li>Typesafe Console</li>
             <li>statsd + graphite</li>
@@ -367,10 +366,9 @@ val q = byIds( List( 5, 6, 7 ) )
           </ul>
             <pre class="fragment"><code data-trim contenteditable>
 - scala.concurrent.Future$$anonfun$map$1.apply
-  - scala.concurrent.Future$$anonfun$map$1.liftedTree2$1
-    - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
-      - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
-        - play.api.libs.ws.Response.json
+ - scala.concurrent.Future$$anonfun$map$1.liftedTree2$1
+  - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
+   - com.kinja.mantle.apiclient.BlogApiClient$$anonfun$com$kinja$mantle$apiclient$BlogApiClient$$_getBlogByHost$1.apply
             </code></pre>
         </section>
 
@@ -379,9 +377,9 @@ val q = byIds( List( 5, 6, 7 ) )
           <h4>Gyorsabb, mint a PHP (legalábbis az a PHP amit mi írtunk)</h4>
           <ul>
             <h4>Locks</h4>
-        <li>Shared resource a Jackson libben (SerializerCache)</li>
-        <li>Global lock a Scala XML parserben (SAXParserFactory constructorban)</li>
-        <li>Global lock az AppDynamics agentben (nem tudom hol, kidobtuk)</li>
+        <li>Shared resource a Jackson libben (megpatcheltük)</li>
+        <li>Global lock a Scala XML parserben (körbedolgoztuk)</li>
+        <li>Global lock az AppDynamics agentben (kidobtuk)</li>
         </br>
         <h4>Sima lassúság, de jó mélyen</h4>
         <li>Scala XML Transformer nagyon-nagyon alapos</li>
@@ -390,7 +388,7 @@ val q = byIds( List( 5, 6, 7 ) )
         </section>
 
         <section>
-          <h1>ÉS VÉGE</h1>
+          <h1>ÉS EGYSZERCSAK VÉGE</h1>
         </section>
 
       </div>
